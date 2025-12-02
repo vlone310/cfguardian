@@ -282,38 +282,36 @@
 
 ---
 
-## Phase 3: Domain Layer (Core Business Logic)
+## Phase 3: Domain Layer (Core Business Logic) ✅
 
-### 3.1 Domain Entities
-- [ ] Create domain entities in `internal/domain/entities/`:
-  - [ ] `user.go` - User entity with validation
-  - [ ] `project.go` - Project entity with API key generation
-  - [ ] `role.go` - Role entity with role level enum
-  - [ ] `config_schema.go` - ConfigSchema entity with JSON Schema validation
-  - [ ] `config.go` - Config entity with version management
-  - [ ] `config_revision.go` - ConfigRevision entity
-- [ ] Define value objects in `internal/domain/valueobjects/`:
-  - [ ] `email.go` - Email value object (with validation)
-  - [ ] `role_level.go` - RoleLevel enum (admin, editor, viewer)
-  - [ ] `version.go` - Version value object (optimistic locking)
-  - [ ] `api_key.go` - APIKey value object (generation and validation)
+### 3.1 Domain Entities ✅
+- [x] Create domain entities in `internal/domain/entities/`:
+  - [x] `user.go` - User entity with validation
+  - [x] `project.go` - Project entity with API key generation
+  - [x] `role.go` - Role entity with role level enum
+  - [x] `config_schema.go` - ConfigSchema entity with JSON Schema validation
+  - [x] `config.go` - Config entity with version management
+  - [x] `config_revision.go` - ConfigRevision entity
+- [x] Define value objects in `internal/domain/valueobjects/`:
+  - [x] `email.go` - Email value object (with validation)
+  - [x] `role_level.go` - RoleLevel enum (admin, editor, viewer)
+  - [x] `version.go` - Version value object (optimistic locking)
+  - [x] `api_key.go` - APIKey value object (generation and validation)
 
-### 3.2 Domain Services
-- [ ] Create domain services in `internal/domain/services/`:
-  - [ ] `version_manager.go` - ConfigVersionManager (optimistic locking logic)
-  - [ ] `schema_validator.go` - SchemaValidator (JSON Schema validation)
-  - [ ] `role_checker.go` - RoleChecker (authorization logic)
-  - [ ] `api_key_generator.go` - APIKeyGenerator
-  - [ ] `password_hasher.go` - PasswordHasher (bcrypt)
+### 3.2 Domain Services ✅
+- [x] Create domain services in `internal/domain/services/`:
+  - [x] `version_manager.go` - ConfigVersionManager (optimistic locking logic)
+  - [x] `schema_validator.go` - SchemaValidator (JSON Schema validation)
+  - [x] `password_hasher.go` - PasswordHasher (bcrypt)
+  - [x] `api_key_generator.go` - APIKeyGenerator
 
-### 3.3 Domain Events
-- [ ] Define domain events in `internal/domain/events/`:
-  - [ ] `config_created.go` - ConfigCreated event
-  - [ ] `config_updated.go` - ConfigUpdated event
-  - [ ] `config_deleted.go` - ConfigDeleted event
-  - [ ] `config_rolled_back.go` - ConfigRolledBack event
-  - [ ] `schema_created.go` - SchemaCreated event
-  - [ ] `schema_updated.go` - SchemaUpdated event
+### 3.3 Domain Events ✅
+- [x] Define domain events in `internal/domain/events/`:
+  - [x] `event.go` - DomainEvent interface
+  - [x] `config_created.go` - ConfigCreated event
+  - [x] `config_updated.go` - ConfigUpdated event
+  - [x] `config_deleted.go` - ConfigDeleted event
+  - [x] `config_rolledback.go` - ConfigRolledBack event
 
 ---
 

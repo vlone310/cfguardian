@@ -8,6 +8,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/metric/noop"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
@@ -26,7 +27,7 @@ type MetricsConfig struct {
 func SetupMetrics(ctx context.Context, cfg MetricsConfig) (metric.MeterProvider, func(context.Context) error, error) {
 	if !cfg.Enabled {
 		// Return a no-op meter provider
-		mp := metric.NewNoopMeterProvider()
+		mp := noop.NewMeterProvider()
 		return mp, func(context.Context) error { return nil }, nil
 	}
 
