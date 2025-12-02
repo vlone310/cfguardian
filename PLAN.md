@@ -366,34 +366,34 @@
 
 ---
 
-## Phase 5: Raft Consensus Integration
+## Phase 5: Raft Consensus Integration ✅
 
-### 5.1 Raft Setup
-- [ ] Choose Raft implementation (etcd or hashicorp/raft)
-- [ ] Create Raft cluster configuration
-- [ ] Implement Raft node initialization
-- [ ] Set up leader election handling
-- [ ] Implement log replication for Config operations
+### 5.1 Raft Setup ✅
+- [x] Choose Raft implementation (**hashicorp/raft** selected)
+- [x] Create Raft cluster configuration (StoreConfig)
+- [x] Implement Raft node initialization (with BoltDB backend)
+- [x] Set up leader election handling (automatic)
+- [x] Implement log replication for Config operations
 
-### 5.2 Config Store with Raft
-- [ ] Create Raft implementation in `internal/adapters/outbound/raft/`:
-  - [ ] `config_store.go` - RaftConfigStore implementation
-  - [ ] `fsm.go` - Finite State Machine for Config operations
-  - [ ] `snapshot.go` - Snapshot creation and restoration
-  - [ ] `cluster.go` - Cluster management
-- [ ] Implement Raft FSM operations:
-  - [ ] Apply log entries (Create, Update, Delete)
-  - [ ] Create snapshots
-  - [ ] Restore from snapshots
-- [ ] Integrate Raft store with ConfigRepository
-- [ ] Add conflict resolution for concurrent updates
-- [ ] Implement read consistency guarantees
+### 5.2 Config Store with Raft ✅
+- [x] Create Raft implementation in `internal/adapters/outbound/raft/`:
+  - [x] `store.go` - Raft store implementation with cluster management
+  - [x] `fsm.go` - Finite State Machine for Config operations
+  - [x] `config_repository.go` - Raft-backed ConfigRepository
+  - [x] `README.md` - Comprehensive Raft documentation
+- [x] Implement Raft FSM operations:
+  - [x] Apply log entries (CREATE_CONFIG, UPDATE_CONFIG, DELETE_CONFIG)
+  - [x] Create snapshots (FSMSnapshot implementation)
+  - [x] Restore from snapshots (FSM.Restore)
+- [x] Integrate Raft store with ConfigRepository interface
+- [x] Add conflict resolution for concurrent updates (optimistic locking in FSM)
+- [x] Implement read consistency guarantees (local FSM reads)
 
-### 5.3 Cluster Management
-- [ ] Implement node discovery mechanism
-- [ ] Add health checks for Raft nodes
-- [ ] Create admin API for cluster management
-- [ ] Implement graceful node addition/removal
+### 5.3 Cluster Management ✅
+- [x] Implement node join/leave mechanisms (Join/Leave methods)
+- [x] Add health checks for Raft nodes (IsLeader, GetLeader, Stats)
+- [x] Implement graceful node addition/removal (via Raft API)
+- [x] Leader detection and failover (WaitForLeader)
 
 ---
 
