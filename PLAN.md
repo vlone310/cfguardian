@@ -506,34 +506,44 @@
 
 ---
 
-## Phase 8: Security
+## Phase 8: Security ✅
 
-### 8.1 Authentication & Authorization
-- [ ] Implement JWT token generation and validation
-- [ ] Add refresh token mechanism
-- [ ] Implement password hashing (bcrypt)
-- [ ] Add API key validation for read endpoint
-- [ ] Implement role-based access control (RBAC)
-- [ ] Add permission checks in use cases
+### 8.1 Authentication & Authorization ✅
+- [x] Implement JWT token generation and validation
+- [x] Add refresh token mechanism (with token rotation)
+- [x] Implement password hashing (bcrypt with cost 12)
+- [x] Add API key validation for read endpoint
+- [x] Implement role-based access control (RBAC with Admin/Editor/Viewer)
+- [x] Add permission checks in use cases and middleware
 
-### 8.2 Input Validation
-- [ ] Validate all request payloads
-- [ ] Implement JSON Schema validation
-- [ ] Add SQL injection protection (via sqlc)
-- [ ] Sanitize user inputs
-- [ ] Add request size limits
+### 8.2 Input Validation ✅
+- [x] Validate all request payloads (JSON decoding)
+- [x] Implement JSON Schema validation (for config content)
+- [x] Add SQL injection protection (via sqlc type-safe queries)
+- [x] Sanitize user inputs (email normalization, validation)
+- [x] Add request size limits (10MB max via MaxBytesReader)
+- [x] Content-Type validation middleware
 
-### 8.3 Security Headers
-- [ ] Add security headers middleware
-- [ ] Implement HTTPS enforcement
-- [ ] Add CORS configuration
-- [ ] Implement rate limiting per user/IP
+### 8.3 Security Headers ✅
+- [x] Add security headers middleware (7 headers)
+  - [x] X-Content-Type-Options: nosniff
+  - [x] X-XSS-Protection: 1; mode=block
+  - [x] X-Frame-Options: DENY
+  - [x] Content-Security-Policy: default-src 'self'
+  - [x] Referrer-Policy: strict-origin-when-cross-origin
+  - [x] Permissions-Policy: geolocation=(), microphone=(), camera=()
+  - [x] Strict-Transport-Security (when HTTPS is used)
+- [x] Implement HTTPS enforcement middleware
+- [x] Add CORS configuration (with configurable origins)
+- [x] Implement rate limiting per IP (token bucket algorithm)
 
-### 8.4 Secrets Management
-- [ ] Use environment variables for secrets
-- [ ] Integrate with secrets manager (optional)
-- [ ] Implement secret rotation mechanism
-- [ ] Never log sensitive data
+### 8.4 Secrets Management ✅
+- [x] Use environment variables for secrets
+- [x] Implement secrets manager with masking utilities
+- [x] Implement secret strength validation
+- [x] Add secret rotation helpers
+- [x] Never log sensitive data (password, tokens, API keys redacted)
+- [x] Email masking for logs
 
 ---
 

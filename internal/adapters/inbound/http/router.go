@@ -37,6 +37,8 @@ func NewRouter(cfg RouterConfig) *chi.Mux {
 	// Global middleware (applied to all routes)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recovery)
+	r.Use(middleware.SecurityHeaders)
+	r.Use(middleware.RequestSizeLimit(10 * 1024 * 1024)) // 10MB max request size
 	r.Use(middleware.Logging)
 	r.Use(middleware.CORS())
 	r.Use(chiMiddleware.Compress(5))
@@ -80,6 +82,7 @@ func NewRouter(cfg RouterConfig) *chi.Mux {
 			// Authentication
 			r.Post("/auth/register", cfg.AuthHandler.Register)
 			r.Post("/auth/login", cfg.AuthHandler.Login)
+			r.Post("/auth/refresh", cfg.AuthHandler.RefreshToken)
 			
 			// Public read API (API key in URL path)
 			r.Get("/read/{apiKey}/{configKey}", cfg.ReadHandler.Read)

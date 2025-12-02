@@ -22,6 +22,7 @@ const (
 type Claims struct {
 	UserID string `json:"user_id"`
 	Email  string `json:"email"`
+	Type   string `json:"type"` // "access" or "refresh"
 	jwt.RegisteredClaims
 }
 
@@ -97,11 +98,12 @@ func GetUserEmail(ctx context.Context) string {
 	return ""
 }
 
-// GenerateToken generates a JWT token for a user
+// GenerateToken generates a JWT access token for a user
 func GenerateToken(userID, email, secret string, expiration time.Duration) (string, error) {
 	claims := &Claims{
 		UserID: userID,
 		Email:  email,
+		Type:   "access",
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -111,5 +113,48 @@ func GenerateToken(userID, email, secret string, expiration time.Duration) (stri
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
+}
+
+// GenerateRefreshToken generates a JWT refresh token for a user
+func GenerateRefreshToken(userID, email, secret string, expiration time.Duration) (string, error) {
+	claims := &Claims{
+		UserID: userID,
+		Email:  email,
+		Type:   "refresh",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    "cfguardian",
+		},
+	}
+	
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(secret))
+}
+
+// ValidateRefreshToken validates a refresh token and returns claims
+func ValidateRefreshToken(tokenString, secret string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+	
+	if err != nil {
+		return nil, fmt.Errorf("invalid refresh token: %w", err)
+	}
+	
+	if !token.Valid {
+		return nil, fmt.Errorf("refresh token is not valid")
+	}
+	
+	// Verify it's a refresh token
+	if claims.Type != "refresh" {
+		return nil, fmt.Errorf("token is not a refresh token")
+	}
+	
+	return claims, nil
 }
 

@@ -19,6 +19,7 @@ import (
 	"github.com/vlone310/cfguardian/internal/adapters/outbound/raft"
 	"github.com/vlone310/cfguardian/internal/domain/services"
 	"github.com/vlone310/cfguardian/internal/infrastructure/config"
+	"github.com/vlone310/cfguardian/internal/infrastructure/secrets"
 	"github.com/vlone310/cfguardian/internal/infrastructure/telemetry"
 	"github.com/vlone310/cfguardian/internal/usecases/auth"
 	configUseCase "github.com/vlone310/cfguardian/internal/usecases/config"
@@ -67,6 +68,18 @@ func main() {
 		"database_host", cfg.Database.Host,
 		"server_port", cfg.Server.Port,
 	)
+	
+	// Validate JWT secret strength (minimum 32 characters for security)
+	if err := secrets.ValidateSecretStrength(cfg.JWT.Secret, 32); err != nil {
+		slog.Warn("JWT secret does not meet recommended strength",
+			"error", err,
+			"recommendation", "Use at least 32 characters with high entropy",
+		)
+	} else {
+		slog.Info("JWT secret validated",
+			"masked", secrets.Mask(cfg.JWT.Secret),
+		)
+	}
 
 	// Initialize database connection
 	dbPool, err := initDatabase(ctx, cfg)
@@ -107,6 +120,7 @@ func main() {
 	// Auth
 	loginUseCase := auth.NewLoginUserUseCase(userRepo, passwordHasher)
 	registerUseCase := auth.NewRegisterUserUseCase(userRepo, passwordHasher)
+	refreshTokenUseCase := auth.NewRefreshTokenUseCase(userRepo)
 
 	// User
 	createUserUseCase := user.NewCreateUserUseCase(userRepo, passwordHasher)
@@ -165,7 +179,9 @@ func main() {
 	slog.Info("Prometheus metrics initialized")
 	
 	// Initialize HTTP handlers
-	authHandler := handlers.NewAuthHandler(loginUseCase, registerUseCase, cfg.JWT.Secret, cfg.JWT.Expiration)
+	// Refresh token TTL: 7 days (168 hours)
+	refreshTokenExpiration := 168 * time.Hour
+	authHandler := handlers.NewAuthHandler(loginUseCase, registerUseCase, refreshTokenUseCase, cfg.JWT.Secret, cfg.JWT.Expiration, refreshTokenExpiration)
 	userHandler := handlers.NewUserHandler(createUserUseCase, listUsersUseCase, getUserUseCase, deleteUserUseCase)
 	projectHandler := handlers.NewProjectHandler(createProjectUseCase, listProjectsUseCase, getProjectUseCase, deleteProjectUseCase)
 	roleHandler := handlers.NewRoleHandler(assignRoleUseCase, revokeRoleUseCase)
