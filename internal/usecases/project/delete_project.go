@@ -9,7 +9,7 @@ import (
 
 // DeleteProjectRequest holds delete project request data
 type DeleteProjectRequest struct {
-	ProjectID string
+	ProjectID string `json:"project_id"`
 }
 
 // DeleteProjectUseCase handles project deletion (admin only)

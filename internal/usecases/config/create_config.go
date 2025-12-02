@@ -15,22 +15,22 @@ import (
 
 // CreateConfigRequest holds config creation data
 type CreateConfigRequest struct {
-	ProjectID       string
-	Key             string
-	SchemaID        string
-	Content         json.RawMessage
-	UpdatedByUserID string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	SchemaID        string          `json:"schema_id"`
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
 }
 
 // CreateConfigResponse holds created config data
 type CreateConfigResponse struct {
-	ProjectID       string
-	Key             string
-	SchemaID        string
-	Version         int64
-	Content         json.RawMessage
-	UpdatedByUserID string
-	CreatedAt       string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	SchemaID        string          `json:"schema_id"`
+	Version         int64           `json:"version"`
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
+	CreatedAt       string          `json:"created_at"`
 }
 
 // CreateConfigUseCase handles config creation

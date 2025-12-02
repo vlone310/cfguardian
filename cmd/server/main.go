@@ -19,6 +19,7 @@ import (
 	"github.com/vlone310/cfguardian/internal/adapters/outbound/raft"
 	"github.com/vlone310/cfguardian/internal/domain/services"
 	"github.com/vlone310/cfguardian/internal/infrastructure/config"
+	"github.com/vlone310/cfguardian/internal/infrastructure/telemetry"
 	"github.com/vlone310/cfguardian/internal/usecases/auth"
 	configUseCase "github.com/vlone310/cfguardian/internal/usecases/config"
 	"github.com/vlone310/cfguardian/internal/usecases/project"
@@ -159,14 +160,20 @@ func main() {
 		configRepo,
 	)
 
+	// Initialize Prometheus metrics
+	prometheusMetrics := telemetry.NewPrometheusMetrics(appName)
+	slog.Info("Prometheus metrics initialized")
+	
 	// Initialize HTTP handlers
-	authHandler := handlers.NewAuthHandler(loginUseCase, registerUseCase)
+	authHandler := handlers.NewAuthHandler(loginUseCase, registerUseCase, cfg.JWT.Secret, cfg.JWT.Expiration)
 	userHandler := handlers.NewUserHandler(createUserUseCase, listUsersUseCase, getUserUseCase, deleteUserUseCase)
 	projectHandler := handlers.NewProjectHandler(createProjectUseCase, listProjectsUseCase, getProjectUseCase, deleteProjectUseCase)
 	roleHandler := handlers.NewRoleHandler(assignRoleUseCase, revokeRoleUseCase)
 	schemaHandler := handlers.NewSchemaHandler(createSchemaUseCase, listSchemasUseCase, updateSchemaUseCase, deleteSchemaUseCase)
 	configHandler := handlers.NewConfigHandler(createConfigUseCase, getConfigUseCase, updateConfigUseCase, deleteConfigUseCase, rollbackConfigUseCase)
 	readHandler := handlers.NewReadHandler(readConfigByAPIKeyUseCase)
+	healthHandler := handlers.NewHealthHandler(dbPool)
+	metricsHandler := handlers.NewMetricsHandler()
 
 	// Initialize router
 	router := httpAdapter.NewRouter(httpAdapter.RouterConfig{
@@ -180,6 +187,9 @@ func main() {
 		SchemaHandler:  schemaHandler,
 		ConfigHandler:  configHandler,
 		ReadHandler:    readHandler,
+		HealthHandler:  healthHandler,
+		MetricsHandler: metricsHandler,
+		PrometheusMetrics: prometheusMetrics,
 		AuthorizationConfig: middleware.AuthorizationConfig{
 			CheckPermission: checkPermissionUseCase,
 		},

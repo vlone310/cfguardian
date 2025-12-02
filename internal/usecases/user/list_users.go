@@ -9,16 +9,16 @@ import (
 
 // UserListItem represents a user in the list
 type UserListItem struct {
-	ID        string
-	Email     string
-	CreatedAt string
-	UpdatedAt string
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // ListUsersResponse holds the list of users
 type ListUsersResponse struct {
-	Users []*UserListItem
-	Total int64
+	Users []*UserListItem `json:"users"`
+	Total int64           `json:"total"`
 }
 
 // ListUsersUseCase handles listing all users

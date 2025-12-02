@@ -10,15 +10,15 @@ import (
 
 // LoginRequest holds login request data
 type LoginRequest struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // LoginResponse holds login response data
 type LoginResponse struct {
-	UserID string
-	Email  string
-	Token  string // JWT token (will be generated in adapter layer)
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
+	Token  string `json:"token"` // JWT token (will be generated in adapter layer)
 }
 
 // LoginUserUseCase handles user authentication

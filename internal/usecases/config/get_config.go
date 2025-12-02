@@ -10,20 +10,20 @@ import (
 
 // GetConfigRequest holds get config request data
 type GetConfigRequest struct {
-	ProjectID string
-	Key       string
+	ProjectID string `json:"project_id"`
+	Key       string `json:"key"`
 }
 
 // GetConfigResponse holds config data
 type GetConfigResponse struct {
-	ProjectID       string
-	Key             string
-	SchemaID        string
-	Version         int64
-	Content         json.RawMessage
-	UpdatedByUserID string
-	CreatedAt       string
-	UpdatedAt       string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	SchemaID        string          `json:"schema_id"`
+	Version         int64           `json:"version"`
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
+	CreatedAt       string          `json:"created_at"`
+	UpdatedAt       string          `json:"updated_at"`
 }
 
 // GetConfigUseCase handles retrieving a config

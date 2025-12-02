@@ -15,21 +15,21 @@ import (
 
 // RollbackConfigRequest holds config rollback data
 type RollbackConfigRequest struct {
-	ProjectID         string
-	Key               string
-	TargetVersion     int64
-	ExpectedVersion   int64 // Current version for optimistic locking
-	RolledBackByUserID string
+	ProjectID         string `json:"project_id"`
+	Key               string `json:"key"`
+	TargetVersion     int64  `json:"target_version"`
+	ExpectedVersion   int64  `json:"expected_version"` // Current version for optimistic locking
+	RolledBackByUserID string `json:"rolled_back_by_user_id"`
 }
 
 // RollbackConfigResponse holds rollback result
 type RollbackConfigResponse struct {
-	ProjectID       string
-	Key             string
-	Version         int64 // New version after rollback
-	Content         json.RawMessage
-	UpdatedByUserID string
-	UpdatedAt       string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	Version         int64           `json:"version"` // New version after rollback
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
+	UpdatedAt       string          `json:"updated_at"`
 }
 
 // RollbackConfigUseCase handles rolling back a config to a previous version

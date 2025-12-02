@@ -15,22 +15,22 @@ import (
 
 // UpdateConfigRequest holds config update data with optimistic locking
 type UpdateConfigRequest struct {
-	ProjectID       string
-	Key             string
-	ExpectedVersion int64           // For optimistic locking
-	Content         json.RawMessage
-	UpdatedByUserID string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	ExpectedVersion int64           `json:"expected_version"` // For optimistic locking
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
 }
 
 // UpdateConfigResponse holds updated config data
 type UpdateConfigResponse struct {
-	ProjectID       string
-	Key             string
-	SchemaID        string
-	Version         int64
-	Content         json.RawMessage
-	UpdatedByUserID string
-	UpdatedAt       string
+	ProjectID       string          `json:"project_id"`
+	Key             string          `json:"key"`
+	SchemaID        string          `json:"schema_id"`
+	Version         int64           `json:"version"`
+	Content         json.RawMessage `json:"content"`
+	UpdatedByUserID string          `json:"updated_by_user_id"`
+	UpdatedAt       string          `json:"updated_at"`
 }
 
 // UpdateConfigUseCase handles config updates with optimistic locking and validation

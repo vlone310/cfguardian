@@ -9,24 +9,24 @@ import (
 
 // ProjectListItem represents a project in the list
 type ProjectListItem struct {
-	ID          string
-	Name        string
-	APIKey      string
-	OwnerUserID string
-	CreatedAt   string
-	UpdatedAt   string
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	APIKey      string `json:"api_key"`
+	OwnerUserID string `json:"owner_user_id"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 // ListProjectsRequest holds list request parameters
 type ListProjectsRequest struct {
 	// Optional: filter by owner
-	OwnerUserID *string
+	OwnerUserID *string `json:"owner_user_id,omitempty"`
 }
 
 // ListProjectsResponse holds the list of projects
 type ListProjectsResponse struct {
-	Projects []*ProjectListItem
-	Total    int64
+	Projects []*ProjectListItem `json:"projects"`
+	Total    int64              `json:"total"`
 }
 
 // ListProjectsUseCase handles listing projects

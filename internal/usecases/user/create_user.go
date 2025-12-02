@@ -13,15 +13,15 @@ import (
 
 // CreateUserRequest holds user creation data
 type CreateUserRequest struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // CreateUserResponse holds created user data
 type CreateUserResponse struct {
-	UserID    string
-	Email     string
-	CreatedAt string
+	UserID    string `json:"user_id"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"created_at"`
 }
 
 // CreateUserUseCase handles user creation (admin only)

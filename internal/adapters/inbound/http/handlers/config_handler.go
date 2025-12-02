@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/common"
+	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/middleware"
 	"github.com/vlone310/cfguardian/internal/usecases/config"
 )
 
@@ -51,8 +52,12 @@ func (h *ConfigHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// TODO: Get user ID from auth context
-	userID := "system" // Placeholder
+	// Get user ID from auth context
+	userID := middleware.GetUserID(r.Context())
+	if userID == "" {
+		common.Unauthorized(w, "User not authenticated")
+		return
+	}
 	
 	resp, err := h.createUseCase.Execute(r.Context(), config.CreateConfigRequest{
 		ProjectID:       projectID,
@@ -103,8 +108,12 @@ func (h *ConfigHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// TODO: Get user ID from auth context
-	userID := "system" // Placeholder
+	// Get user ID from auth context
+	userID := middleware.GetUserID(r.Context())
+	if userID == "" {
+		common.Unauthorized(w, "User not authenticated")
+		return
+	}
 	
 	resp, err := h.updateUseCase.Execute(r.Context(), config.UpdateConfigRequest{
 		ProjectID:       projectID,
@@ -132,8 +141,12 @@ func (h *ConfigHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	projectID := chi.URLParam(r, "projectId")
 	configKey := chi.URLParam(r, "configKey")
 	
-	// TODO: Get user ID from auth context
-	userID := "system" // Placeholder
+	// Get user ID from auth context
+	userID := middleware.GetUserID(r.Context())
+	if userID == "" {
+		common.Unauthorized(w, "User not authenticated")
+		return
+	}
 	
 	err := h.deleteUseCase.Execute(r.Context(), config.DeleteConfigRequest{
 		ProjectID:       projectID,
@@ -164,8 +177,12 @@ func (h *ConfigHandler) Rollback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// TODO: Get user ID from auth context
-	userID := "system" // Placeholder
+	// Get user ID from auth context
+	userID := middleware.GetUserID(r.Context())
+	if userID == "" {
+		common.Unauthorized(w, "User not authenticated")
+		return
+	}
 	
 	resp, err := h.rollbackUseCase.Execute(r.Context(), config.RollbackConfigRequest{
 		ProjectID:         projectID,

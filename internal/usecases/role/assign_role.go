@@ -11,18 +11,18 @@ import (
 
 // AssignRoleRequest holds role assignment data
 type AssignRoleRequest struct {
-	UserID    string
-	ProjectID string
-	RoleLevel string
+	UserID    string `json:"user_id"`
+	ProjectID string `json:"project_id"`
+	RoleLevel string `json:"role_level"`
 }
 
 // AssignRoleResponse holds assigned role data
 type AssignRoleResponse struct {
-	UserID    string
-	ProjectID string
-	RoleLevel string
-	CreatedAt string
-	UpdatedAt string
+	UserID    string `json:"user_id"`
+	ProjectID string `json:"project_id"`
+	RoleLevel string `json:"role_level"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // AssignRoleUseCase handles role assignment

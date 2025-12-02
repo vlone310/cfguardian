@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/common"
+	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/middleware"
 	"github.com/vlone310/cfguardian/internal/usecases/schema"
 )
 
@@ -45,8 +46,12 @@ func (h *SchemaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// TODO: Get user ID from auth context
-	userID := "system" // Placeholder
+	// Get user ID from auth context
+	userID := middleware.GetUserID(r.Context())
+	if userID == "" {
+		common.Unauthorized(w, "User not authenticated")
+		return
+	}
 	
 	resp, err := h.createUseCase.Execute(r.Context(), schema.CreateSchemaRequest{
 		Name:            reqBody.Name,

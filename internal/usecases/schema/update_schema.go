@@ -10,17 +10,17 @@ import (
 
 // UpdateSchemaRequest holds schema update data
 type UpdateSchemaRequest struct {
-	SchemaID      string
-	Name          *string
-	SchemaContent *string
+	SchemaID      string  `json:"schema_id"`
+	Name          *string `json:"name,omitempty"`
+	SchemaContent *string `json:"schema_content,omitempty"`
 }
 
 // UpdateSchemaResponse holds updated schema data
 type UpdateSchemaResponse struct {
-	ID            string
-	Name          string
-	SchemaContent string
-	UpdatedAt     string
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	SchemaContent string `json:"schema_content"`
+	UpdatedAt     string `json:"updated_at"`
 }
 
 // UpdateSchemaUseCase handles config schema updates

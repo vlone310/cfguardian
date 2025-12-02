@@ -12,14 +12,14 @@ import (
 
 // RegisterRequest holds user registration data
 type RegisterRequest struct {
-	Email    string
-	Password string
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 // RegisterResponse holds registration response data
 type RegisterResponse struct {
-	UserID string
-	Email  string
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
 }
 
 // RegisterUserUseCase handles user registration

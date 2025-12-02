@@ -9,8 +9,8 @@ import (
 
 // RevokeRoleRequest holds role revocation data
 type RevokeRoleRequest struct {
-	UserID    string
-	ProjectID string
+	UserID    string `json:"user_id"`
+	ProjectID string `json:"project_id"`
 }
 
 // RevokeRoleUseCase handles role revocation

@@ -13,17 +13,17 @@ import (
 
 // CreateProjectRequest holds project creation data
 type CreateProjectRequest struct {
-	Name        string
-	OwnerUserID string
+	Name        string `json:"name"`
+	OwnerUserID string `json:"owner_user_id"`
 }
 
 // CreateProjectResponse holds created project data
 type CreateProjectResponse struct {
-	ID          string
-	Name        string
-	APIKey      string
-	OwnerUserID string
-	CreatedAt   string
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	APIKey      string `json:"api_key"`
+	OwnerUserID string `json:"owner_user_id"`
+	CreatedAt   string `json:"created_at"`
 }
 
 // CreateProjectUseCase handles project creation

@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/common"
+	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/middleware"
 	"github.com/vlone310/cfguardian/internal/usecases/auth"
 )
 
@@ -12,16 +14,22 @@ import (
 type AuthHandler struct {
 	loginUseCase    *auth.LoginUserUseCase
 	registerUseCase *auth.RegisterUserUseCase
+	jwtSecret       string
+	jwtExpiration   time.Duration
 }
 
 // NewAuthHandler creates a new AuthHandler
 func NewAuthHandler(
 	loginUseCase *auth.LoginUserUseCase,
 	registerUseCase *auth.RegisterUserUseCase,
+	jwtSecret string,
+	jwtExpiration time.Duration,
 ) *AuthHandler {
 	return &AuthHandler{
 		loginUseCase:    loginUseCase,
 		registerUseCase: registerUseCase,
+		jwtSecret:       jwtSecret,
+		jwtExpiration:   jwtExpiration,
 	}
 }
 
@@ -58,8 +66,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	// TODO: Generate JWT token here
-	// For now, we'll return the response as-is
-	common.OK(w, resp)
+	// Generate JWT token
+	token, err := middleware.GenerateToken(
+		resp.UserID,
+		resp.Email,
+		h.jwtSecret,
+		h.jwtExpiration,
+	)
+	if err != nil {
+		common.InternalServerError(w, "Failed to generate token")
+		return
+	}
+	
+	// Return response with token
+	common.OK(w, map[string]interface{}{
+		"user_id": resp.UserID,
+		"email":   resp.Email,
+		"token":   token,
+	})
 }
 

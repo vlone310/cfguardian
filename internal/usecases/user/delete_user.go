@@ -9,7 +9,7 @@ import (
 
 // DeleteUserRequest holds delete user request data
 type DeleteUserRequest struct {
-	UserID string
+	UserID string `json:"user_id"`
 }
 
 // DeleteUserUseCase handles user deletion (admin only)

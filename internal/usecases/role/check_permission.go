@@ -10,15 +10,15 @@ import (
 
 // CheckPermissionRequest holds permission check data
 type CheckPermissionRequest struct {
-	UserID           string
-	ProjectID        string
-	RequiredRoleLevel string
+	UserID           string `json:"user_id"`
+	ProjectID        string `json:"project_id"`
+	RequiredRoleLevel string `json:"required_role_level"`
 }
 
 // CheckPermissionResponse holds permission check result
 type CheckPermissionResponse struct {
-	Allowed       bool
-	UserRoleLevel string
+	Allowed       bool   `json:"allowed"`
+	UserRoleLevel string `json:"user_role_level"`
 }
 
 // CheckPermissionUseCase handles permission checking for authorization

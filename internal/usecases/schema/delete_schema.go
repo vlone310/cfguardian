@@ -9,7 +9,7 @@ import (
 
 // DeleteSchemaRequest holds schema deletion data
 type DeleteSchemaRequest struct {
-	SchemaID string
+	SchemaID string `json:"schema_id"`
 }
 
 // DeleteSchemaUseCase handles config schema deletion

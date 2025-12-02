@@ -11,15 +11,15 @@ import (
 
 // ReadConfigByAPIKeyRequest holds client config read request
 type ReadConfigByAPIKeyRequest struct {
-	APIKey string
-	Key    string
+	APIKey string `json:"api_key"`
+	Key    string `json:"key"`
 }
 
 // ReadConfigByAPIKeyResponse holds config data for clients
 type ReadConfigByAPIKeyResponse struct {
-	Key     string
-	Version int64
-	Content json.RawMessage
+	Key     string          `json:"key"`
+	Version int64           `json:"version"`
+	Content json.RawMessage `json:"content"`
 }
 
 // ReadConfigByAPIKeyUseCase handles read-only config access for clients

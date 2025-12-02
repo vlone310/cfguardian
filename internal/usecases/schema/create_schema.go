@@ -12,18 +12,18 @@ import (
 
 // CreateSchemaRequest holds schema creation data
 type CreateSchemaRequest struct {
-	Name          string
-	SchemaContent string
-	CreatedByUserID string
+	Name          string `json:"name"`
+	SchemaContent string `json:"schema_content"`
+	CreatedByUserID string `json:"created_by_user_id"`
 }
 
 // CreateSchemaResponse holds created schema data
 type CreateSchemaResponse struct {
-	ID              string
-	Name            string
-	SchemaContent   string
-	CreatedByUserID string
-	CreatedAt       string
+	ID              string `json:"id"`
+	Name            string `json:"name"`
+	SchemaContent   string `json:"schema_content"`
+	CreatedByUserID string `json:"created_by_user_id"`
+	CreatedAt       string `json:"created_at"`
 }
 
 // CreateSchemaUseCase handles config schema creation

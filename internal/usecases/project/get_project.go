@@ -9,17 +9,17 @@ import (
 
 // GetProjectRequest holds get project request data
 type GetProjectRequest struct {
-	ProjectID string
+	ProjectID string `json:"project_id"`
 }
 
 // GetProjectResponse holds project data
 type GetProjectResponse struct {
-	ID          string
-	Name        string
-	APIKey      string
-	OwnerUserID string
-	CreatedAt   string
-	UpdatedAt   string
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	APIKey      string `json:"api_key"`
+	OwnerUserID string `json:"owner_user_id"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 // GetProjectUseCase handles retrieving a project by ID

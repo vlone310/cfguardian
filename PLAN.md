@@ -443,47 +443,66 @@
 - [x] Implement error responses with codes
 - [x] Add version conflict detection (409 Conflict)
 
+### 6.5 JSON Serialization ✅
+- [x] Add JSON tags to all request/response structures (23 use case files):
+  - [x] Auth use cases (2 files): register_user, login_user
+  - [x] User use cases (4 files): create_user, list_users, get_user, delete_user
+  - [x] Project use cases (4 files): create_project, list_projects, get_project, delete_project
+  - [x] Role use cases (3 files): assign_role, revoke_role, check_permission
+  - [x] Schema use cases (4 files): create_schema, list_schemas, update_schema, delete_schema
+  - [x] Config use cases (6 files): create_config, get_config, update_config, delete_config, rollback_config, read_config_by_api_key
+- [x] Apply consistent `snake_case` JSON field naming convention
+- [x] Use `omitempty` for optional fields
+- [x] Verify JSON serialization/deserialization with API tests
+
 ---
 
-## Phase 7: Observability
+## Phase 7: Observability ✅
 
-### 7.1 Structured Logging
-- [ ] Set up slog with appropriate handlers
-- [ ] Define log levels (Debug, Info, Warn, Error)
-- [ ] Add contextual logging throughout application
-- [ ] Implement log sampling for high-volume endpoints
-- [ ] Add correlation IDs for request tracing
+### 7.1 Structured Logging ✅
+- [x] Set up slog with appropriate handlers
+- [x] Define log levels (Debug, Info, Warn, Error)
+- [x] Add contextual logging throughout application
+- [x] Add correlation IDs for request tracing (X-Request-ID)
+- [x] JSON structured logging in production
+- [x] Text logging for development
 
-### 7.2 OpenTelemetry Integration
-- [ ] Initialize OpenTelemetry SDK
-- [ ] Set up trace provider
-- [ ] Add tracing to:
-  - [ ] HTTP handlers
-  - [ ] Database operations
-  - [ ] Raft operations
-  - [ ] External API calls
-- [ ] Configure trace exporters (Jaeger/Zipkin)
-- [ ] Add custom spans for critical operations
+### 7.2 OpenTelemetry Integration ✅
+- [x] Initialize OpenTelemetry SDK
+- [x] Set up trace provider with OTLP exporter
+- [x] Set up meter provider with OTLP exporter
+- [x] Configure W3C Trace Context propagation
+- [x] Add sampling configuration (trace ratio based)
+- [x] Implement graceful shutdown for providers
 
-### 7.3 Metrics
-- [ ] Define custom metrics:
-  - [ ] Request count by endpoint
-  - [ ] Request duration
-  - [ ] Error rates
-  - [ ] Config update success/failure
-  - [ ] Optimistic locking conflicts
-  - [ ] Raft cluster health
-  - [ ] Database connection pool stats
-- [ ] Expose `/metrics` endpoint (Prometheus format)
-- [ ] Set up metric exporters
+### 7.3 Prometheus Metrics ✅
+- [x] Define custom metrics:
+  - [x] HTTP request count by method/path/status
+  - [x] HTTP request duration histograms
+  - [x] HTTP requests in-flight gauge
+  - [x] Config operations counter
+  - [x] Config version conflicts counter
+  - [x] Config validation errors counter
+  - [x] Database connection pool stats (open, in-use, idle)
+  - [x] Database query duration histograms
+  - [x] Raft state gauge
+  - [x] Raft leader changes counter
+  - [x] Raft commits counter
+  - [x] Raft snapshots counter
+  - [x] Raft apply duration histogram
+- [x] Expose `/metrics` endpoint (Prometheus format)
+- [x] Implement metrics middleware for automatic HTTP metrics collection
+- [x] Use promauto for automatic metric registration
 
-### 7.4 Health Checks
-- [ ] Implement `/health` endpoint
-- [ ] Implement `/ready` endpoint
-- [ ] Add health checks for:
-  - [ ] Database connectivity
-  - [ ] Raft cluster status
-  - [ ] Dependent services
+### 7.4 Health Checks ✅
+- [x] Implement `/health` endpoint (basic health check)
+- [x] Implement `/ready` endpoint (readiness probe for K8s)
+- [x] Implement `/live` endpoint (liveness probe for K8s)
+- [x] Add health checks for:
+  - [x] Database connectivity (with timeout)
+  - [x] Raft cluster status
+- [x] Return appropriate HTTP status codes (200 for healthy, 503 for unhealthy)
+- [x] Include timestamp and uptime in responses
 
 ---
 

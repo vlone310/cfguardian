@@ -9,18 +9,18 @@ import (
 
 // SchemaListItem represents a schema in the list
 type SchemaListItem struct {
-	ID              string
-	Name            string
-	CreatedByUserID string
-	CreatedAt       string
-	UpdatedAt       string
-	ConfigsUsing    int64 // Number of configs using this schema
+	ID              string `json:"id"`
+	Name            string `json:"name"`
+	CreatedByUserID string `json:"created_by_user_id"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+	ConfigsUsing    int64  `json:"configs_using"` // Number of configs using this schema
 }
 
 // ListSchemasResponse holds the list of schemas
 type ListSchemasResponse struct {
-	Schemas []*SchemaListItem
-	Total   int64
+	Schemas []*SchemaListItem `json:"schemas"`
+	Total   int64             `json:"total"`
 }
 
 // ListSchemasUseCase handles listing config schemas

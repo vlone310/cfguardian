@@ -12,9 +12,9 @@ import (
 
 // DeleteConfigRequest holds delete config request data
 type DeleteConfigRequest struct {
-	ProjectID       string
-	Key             string
-	DeletedByUserID string
+	ProjectID       string `json:"project_id"`
+	Key             string `json:"key"`
+	DeletedByUserID string `json:"deleted_by_user_id"`
 }
 
 // DeleteConfigUseCase handles config deletion

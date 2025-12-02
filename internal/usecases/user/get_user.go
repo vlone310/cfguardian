@@ -9,15 +9,15 @@ import (
 
 // GetUserRequest holds get user request data
 type GetUserRequest struct {
-	UserID string
+	UserID string `json:"user_id"`
 }
 
 // GetUserResponse holds user data
 type GetUserResponse struct {
-	ID        string
-	Email     string
-	CreatedAt string
-	UpdatedAt string
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // GetUserUseCase handles retrieving a user by ID

@@ -9,6 +9,7 @@ import (
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/common"
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/handlers"
 	"github.com/vlone310/cfguardian/internal/adapters/inbound/http/middleware"
+	"github.com/vlone310/cfguardian/internal/infrastructure/telemetry"
 )
 
 // RouterConfig holds router configuration
@@ -23,6 +24,9 @@ type RouterConfig struct {
 	SchemaHandler      *handlers.SchemaHandler
 	ConfigHandler      *handlers.ConfigHandler
 	ReadHandler        *handlers.ReadHandler
+	HealthHandler      *handlers.HealthHandler
+	MetricsHandler     *handlers.MetricsHandler
+	PrometheusMetrics  *telemetry.PrometheusMetrics
 	AuthorizationConfig middleware.AuthorizationConfig
 }
 
@@ -38,16 +42,28 @@ func NewRouter(cfg RouterConfig) *chi.Mux {
 	r.Use(chiMiddleware.Compress(5))
 	r.Use(chiMiddleware.Timeout(60 * time.Second))
 	
+	// Metrics middleware (if enabled)
+	if cfg.PrometheusMetrics != nil {
+		r.Use(middleware.Metrics(cfg.PrometheusMetrics))
+	}
+	
 	// Rate limiting (if configured)
 	if cfg.RateLimitRPS > 0 {
 		rateLimiter := middleware.NewRateLimiter(cfg.RateLimitRPS, cfg.RateLimitBurst)
 		r.Use(middleware.RateLimit(rateLimiter))
 	}
 	
-	// Health check (no auth required)
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		common.OK(w, map[string]string{"status": "healthy"})
-	})
+	// Health check endpoints (no auth required)
+	if cfg.HealthHandler != nil {
+		r.Get("/health", cfg.HealthHandler.Health)
+		r.Get("/ready", cfg.HealthHandler.Readiness)
+		r.Get("/live", cfg.HealthHandler.Liveness)
+	}
+	
+	// Metrics endpoint (no auth required - typically scraped by Prometheus)
+	if cfg.MetricsHandler != nil {
+		r.Handle("/metrics", cfg.MetricsHandler)
+	}
 	
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		common.OK(w, map[string]string{
