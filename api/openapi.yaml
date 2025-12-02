@@ -1,0 +1,832 @@
+openapi: 3.0.3
+info:
+  title: GoConfig Guardian API
+  version: 1.0.0
+  description: |
+    Distributed Configuration Management Service with strong consistency (CP),
+    optimistic locking, schema validation, and role-based access control.
+    
+    ## Authentication
+    
+    - **Management API**: JWT Bearer token (login required)
+    - **Client API**: API Key authentication (project-level access)
+    
+    ## Features
+    
+    - ✅ Multi-tenancy with Projects
+    - ✅ Role-Based Access Control (Admin, Editor, Viewer)
+    - ✅ JSON Schema validation
+    - ✅ Optimistic locking (version-based)
+    - ✅ Raft consensus for strong consistency
+    - ✅ Complete audit log (revisions)
+    - ✅ Rollback to previous versions
+    
+  contact:
+    name: API Support
+    email: support@cfguardian.io
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development
+  - url: https://api.cfguardian.io/v1
+    description: Production
+
+tags:
+  - name: Auth
+    description: Authentication and registration
+  - name: Users
+    description: User management
+  - name: Projects
+    description: Project management
+  - name: Roles
+    description: Role-Based Access Control
+  - name: Schemas
+    description: JSON Schema management
+  - name: Configs
+    description: Configuration management
+  - name: Read
+    description: Public client API for reading configs
+
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecureP@ssw0rd
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with email and password
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                  email:
+                    type: string
+                  token:
+                    type: string
+                    description: JWT token for subsequent requests
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List all users
+      operationId: listUsers
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Users]
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      operationId: getUser
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Users]
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /projects:
+    get:
+      tags: [Projects]
+      summary: List all projects
+      operationId: listProjects
+      parameters:
+        - name: owner_user_id
+          in: query
+          description: Filter by owner user ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  total:
+                    type: integer
+
+    post:
+      tags: [Projects]
+      summary: Create a new project
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, owner_user_id]
+              properties:
+                name:
+                  type: string
+                  example: Production App
+                owner_user_id:
+                  type: string
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /projects/{projectId}:
+    get:
+      tags: [Projects]
+      summary: Get project by ID
+      operationId: getProject
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Projects]
+      summary: Delete a project
+      operationId: deleteProject
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '204':
+          description: Project deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /projects/{projectId}/roles:
+    post:
+      tags: [Roles]
+      summary: Assign a role to a user
+      operationId: assignRole
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, role_level]
+              properties:
+                user_id:
+                  type: string
+                role_level:
+                  type: string
+                  enum: [admin, editor, viewer]
+      responses:
+        '200':
+          description: Role assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    get:
+      tags: [Roles]
+      summary: List roles for a project
+      operationId: listProjectRoles
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: List of roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+
+  /projects/{projectId}/roles/{userId}:
+    delete:
+      tags: [Roles]
+      summary: Revoke a user's role
+      operationId: revokeRole
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: Role revoked
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /schemas:
+    get:
+      tags: [Schemas]
+      summary: List all config schemas
+      operationId: listSchemas
+      responses:
+        '200':
+          description: List of schemas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schemas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConfigSchema'
+                  total:
+                    type: integer
+
+    post:
+      tags: [Schemas]
+      summary: Create a new config schema
+      operationId: createSchema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, schema_content]
+              properties:
+                name:
+                  type: string
+                  example: App Config Schema
+                schema_content:
+                  type: string
+                  description: JSON Schema definition
+                  example: '{"type":"object","properties":{"port":{"type":"number"}}}'
+      responses:
+        '201':
+          description: Schema created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigSchema'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /schemas/{schemaId}:
+    put:
+      tags: [Schemas]
+      summary: Update a config schema
+      operationId: updateSchema
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                schema_content:
+                  type: string
+      responses:
+        '200':
+          description: Schema updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigSchema'
+
+    delete:
+      tags: [Schemas]
+      summary: Delete a config schema
+      operationId: deleteSchema
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Schema deleted
+        '400':
+          description: Cannot delete - configs still using this schema
+
+  /projects/{projectId}/configs:
+    get:
+      tags: [Configs]
+      summary: List configs for a project
+      operationId: listConfigs
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: List of configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+
+    post:
+      tags: [Configs]
+      summary: Create a new config
+      operationId: createConfig
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key, schema_id, content]
+              properties:
+                key:
+                  type: string
+                  example: app-config
+                schema_id:
+                  type: string
+                content:
+                  type: object
+                  description: Configuration data (validated against schema)
+                  example: {"port": 8080, "debug": true}
+      responses:
+        '201':
+          description: Config created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /projects/{projectId}/configs/{configKey}:
+    get:
+      tags: [Configs]
+      summary: Get a config
+      operationId: getConfig
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/ConfigKey'
+      responses:
+        '200':
+          description: Config details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Configs]
+      summary: Update a config (with optimistic locking)
+      operationId: updateConfig
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/ConfigKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expected_version, content]
+              properties:
+                expected_version:
+                  type: integer
+                  description: Current version (for optimistic locking)
+                  example: 5
+                content:
+                  type: object
+                  example: {"port": 9090, "debug": false}
+      responses:
+        '200':
+          description: Config updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '409':
+          description: Version mismatch (concurrent modification detected)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags: [Configs]
+      summary: Delete a config
+      operationId: deleteConfig
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/ConfigKey'
+      responses:
+        '204':
+          description: Config deleted
+
+  /projects/{projectId}/configs/{configKey}/rollback:
+    post:
+      tags: [Configs]
+      summary: Rollback config to a previous version
+      operationId: rollbackConfig
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - $ref: '#/components/parameters/ConfigKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_version, expected_version]
+              properties:
+                target_version:
+                  type: integer
+                  description: Version to rollback to
+                  example: 3
+                expected_version:
+                  type: integer
+                  description: Current version (for optimistic locking)
+                  example: 5
+      responses:
+        '200':
+          description: Config rolled back
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /read/{apiKey}/{configKey}:
+    get:
+      tags: [Read]
+      summary: Read config by API key (public client API)
+      operationId: readConfig
+      security:
+        - apiKeyAuth: []
+      parameters:
+        - name: apiKey
+          in: path
+          required: true
+          description: Project API key
+          schema:
+            type: string
+            example: cfg_abc123def456ghi789
+        - name: configKey
+          in: path
+          required: true
+          description: Configuration key
+          schema:
+            type: string
+            example: app-config
+      responses:
+        '200':
+          description: Config content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  version:
+                    type: integer
+                  content:
+                    type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login
+    
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Project API key for client access
+
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    ConfigKey:
+      name: configKey
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        api_key:
+          type: string
+          description: API key for client access
+        owner_user_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Role:
+      type: object
+      properties:
+        user_id:
+          type: string
+        project_id:
+          type: string
+        role_level:
+          type: string
+          enum: [admin, editor, viewer]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ConfigSchema:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        schema_content:
+          type: string
+          description: JSON Schema definition
+        created_by_user_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Config:
+      type: object
+      properties:
+        project_id:
+          type: string
+        key:
+          type: string
+        schema_id:
+          type: string
+        version:
+          type: integer
+          description: Version number for optimistic locking
+        content:
+          type: object
+          description: Configuration data
+        updated_by_user_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid input"
+            code: "BAD_REQUEST"
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Authentication required"
+            code: "UNAUTHORIZED"
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Insufficient permissions"
+            code: "FORBIDDEN"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+            code: "NOT_FOUND"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Version mismatch - concurrent modification detected"
+            code: "CONFLICT"
+

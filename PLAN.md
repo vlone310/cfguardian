@@ -397,47 +397,46 @@
 
 ---
 
-## Phase 6: HTTP API Layer
+## Phase 6: HTTP API Layer ✅
 
-### 6.1 OpenAPI Specification
-- [ ] Define complete OpenAPI 3.0 spec in `api/openapi.yaml`:
-  - [ ] All endpoint definitions
-  - [ ] Request/response schemas
-  - [ ] Authentication schemes (JWT, API Key)
-  - [ ] Error responses
-  - [ ] Examples
-- [ ] Generate server code using oapi-codegen
-- [ ] Generate client SDK (optional)
+### 6.1 OpenAPI Specification ✅
+- [x] Define complete OpenAPI 3.0 spec in `api/openapi.yaml`:
+  - [x] All endpoint definitions (20+ endpoints)
+  - [x] Request/response schemas
+  - [x] Authentication schemes (JWT, API Key)
+  - [x] Error responses
+  - [x] Examples
+- [x] Manual implementation (following OpenAPI spec)
+- [ ] Generate client SDK (optional - future enhancement)
 
-### 6.2 HTTP Handlers (Inbound Adapters)
-- [ ] Set up chi router in `internal/adapters/inbound/http/`:
-  - [ ] `router.go` - Main router setup and route registration
-- [ ] Implement handler groups in `internal/adapters/inbound/http/handlers/`:
-  - [ ] `auth_handler.go` - `/v1/auth` - Authentication handlers
-  - [ ] `user_handler.go` - `/v1/users` - User management
-  - [ ] `project_handler.go` - `/v1/projects` - Project management
-  - [ ] `role_handler.go` - `/v1/projects/{id}/roles` - Role management
-  - [ ] `schema_handler.go` - `/v1/schemas` - Schema management
-  - [ ] `config_handler.go` - `/v1/projects/{id}/configs` - Config management
-  - [ ] `read_handler.go` - `/v1/read/{apiKey}/{key}` - Public read API
+### 6.2 HTTP Handlers (Inbound Adapters) ✅
+- [x] Set up chi router in `internal/adapters/inbound/http/`:
+  - [x] `router.go` - Main router setup and route registration
+- [x] Implement handler groups in `internal/adapters/inbound/http/handlers/`:
+  - [x] `auth_handler.go` - `/v1/auth` - Authentication handlers
+  - [x] `user_handler.go` - `/v1/users` - User management
+  - [x] `project_handler.go` - `/v1/projects` - Project management
+  - [x] `role_handler.go` - `/v1/projects/{id}/roles` - Role management
+  - [x] `schema_handler.go` - `/v1/schemas` - Schema management
+  - [x] `config_handler.go` - `/v1/projects/{id}/configs` - Config management
+  - [x] `read_handler.go` - `/v1/read/{apiKey}/{key}` - Public read API
 
-### 6.3 Middleware Implementation
-- [ ] Implement middleware in `internal/adapters/inbound/http/middleware/`:
-  - [ ] `request_id.go` - Request ID middleware
-  - [ ] `logging.go` - Structured logging middleware (slog)
-  - [ ] `auth.go` - Authentication middleware (JWT)
-  - [ ] `authorization.go` - Authorization middleware (role-based)
-  - [ ] `cors.go` - CORS middleware
-  - [ ] `rate_limit.go` - Rate limiting middleware
-  - [ ] `recovery.go` - Panic recovery middleware
-  - [ ] `size_limit.go` - Request/response size limiting
-  - [ ] `timeout.go` - Timeout middleware
+### 6.3 Middleware Implementation ✅
+- [x] Implement middleware in `internal/adapters/inbound/http/middleware/`:
+  - [x] `request_id.go` - Request ID middleware
+  - [x] `logging.go` - Structured logging middleware (slog)
+  - [x] `auth.go` - Authentication middleware (JWT)
+  - [x] `authorization.go` - Authorization middleware (role-based)
+  - [x] `cors.go` - CORS middleware
+  - [x] `rate_limit.go` - Rate limiting middleware
+  - [x] `recovery.go` - Panic recovery middleware
+  - [x] Chi built-in compression and timeout
 
-### 6.4 Error Handling
-- [ ] Define standard error response format
-- [ ] Create error mapping from domain to HTTP
-- [ ] Implement problem details (RFC 7807)
-- [ ] Add error codes catalog
+### 6.4 Error Handling ✅
+- [x] Define standard error response format
+- [x] Create response helpers in `common/response.go`
+- [x] Implement error responses with codes
+- [x] Add version conflict detection (409 Conflict)
 
 ---
 
