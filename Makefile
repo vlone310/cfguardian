@@ -124,19 +124,23 @@ migrate-create:
 		echo "$(RED)Error: NAME is required. Usage: make migrate-create NAME=create_users$(NC)"; \
 		exit 1; \
 	fi
-	@echo "$(GREEN)Creating migration: $(NAME)$(NC)"
-	migrate create -ext sql -dir db/migrations -seq $(NAME)
+	@./scripts/migrate.sh create $(NAME)
 
-## migrate-up: Run database migrations
+## migrate-up: Run all pending database migrations
 migrate-up:
-	@echo "$(GREEN)Running migrations...$(NC)"
-	migrate -path db/migrations -database "$(DB_URL)" up
-	@echo "$(GREEN)Migrations complete!$(NC)"
+	@./scripts/migrate.sh up
+
+## migrate-up-one: Run one pending migration
+migrate-up-one:
+	@./scripts/migrate.sh up 1
 
 ## migrate-down: Rollback last migration
 migrate-down:
-	@echo "$(YELLOW)Rolling back last migration...$(NC)"
-	migrate -path db/migrations -database "$(DB_URL)" down 1
+	@./scripts/migrate.sh down 1
+
+## migrate-down-all: Rollback ALL migrations (DANGEROUS)
+migrate-down-all:
+	@./scripts/migrate.sh down
 
 ## migrate-force: Force migration version (usage: make migrate-force VERSION=1)
 migrate-force:
@@ -144,11 +148,11 @@ migrate-force:
 		echo "$(RED)Error: VERSION is required. Usage: make migrate-force VERSION=1$(NC)"; \
 		exit 1; \
 	fi
-	migrate -path db/migrations -database "$(DB_URL)" force $(VERSION)
+	@./scripts/migrate.sh force $(VERSION)
 
 ## migrate-version: Show current migration version
 migrate-version:
-	migrate -path db/migrations -database "$(DB_URL)" version
+	@./scripts/migrate.sh version
 
 ## docker-build: Build Docker image
 docker-build:
