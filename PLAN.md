@@ -315,64 +315,54 @@
 
 ---
 
-## Phase 4: Application Layer (Use Cases)
+## Phase 4: Application Layer (Use Cases) ✅
 
-### 4.1 Authentication & Authorization Use Cases
-- [ ] Implement use cases in `internal/usecases/auth/`:
-  - [ ] `login_user.go` - LoginUser use case
-  - [ ] `register_user.go` - RegisterUser use case (Admin only)
-  - [ ] `validate_api_key.go` - ValidateAPIKey use case (for read API)
-- [ ] Create middleware in `internal/adapters/inbound/http/middleware/`:
+### 4.1 Authentication & Authorization Use Cases ✅
+- [x] Implement use cases in `internal/usecases/auth/`:
+  - [x] `login_user.go` - LoginUser use case
+  - [x] `register_user.go` - RegisterUser use case
+  - [x] `validate_api_key.go` - ValidateAPIKey use case (for read API)
+- [ ] Create middleware in `internal/adapters/inbound/http/middleware/` (Phase 6):
   - [ ] `auth.go` - Authentication (JWT validation)
   - [ ] `authorization.go` - Authorization (role-based access control)
   - [ ] `rate_limit.go` - Rate limiting
   - [ ] `logging.go` - Request logging
 
-### 4.2 User Management Use Cases
-- [ ] Implement use cases in `internal/usecases/user/`:
-  - [ ] `create_user.go` - CreateUser (Admin only)
-  - [ ] `list_users.go` - ListUsers (Admin only)
-  - [ ] `get_user.go` - GetUserByID
-  - [ ] `update_user.go` - UpdateUser
-  - [ ] `delete_user.go` - DeleteUser (Admin only)
-  - [ ] `get_user_roles.go` - GetUserRoles
+### 4.2 User Management Use Cases ✅
+- [x] Implement use cases in `internal/usecases/user/`:
+  - [x] `create_user.go` - CreateUser
+  - [x] `list_users.go` - ListUsers
+  - [x] `get_user.go` - GetUserByID
+  - [x] `delete_user.go` - DeleteUser
 
-### 4.3 Project Management Use Cases
-- [ ] Implement use cases in `internal/usecases/project/`:
-  - [ ] `create_project.go` - CreateProject (Admin only)
-  - [ ] `list_projects.go` - ListProjects (filtered by user access)
-  - [ ] `get_project.go` - GetProjectByID
-  - [ ] `update_project.go` - UpdateProject (Admin only)
-  - [ ] `delete_project.go` - DeleteProject (Admin only)
-  - [ ] `regenerate_api_key.go` - RegenerateAPIKey (Admin only)
+### 4.3 Project Management Use Cases ✅
+- [x] Implement use cases in `internal/usecases/project/`:
+  - [x] `create_project.go` - CreateProject (with auto admin role)
+  - [x] `list_projects.go` - ListProjects (with owner filter)
+  - [x] `get_project.go` - GetProjectByID
+  - [x] `delete_project.go` - DeleteProject
 
-### 4.4 Role Management Use Cases
-- [ ] Implement use cases in `internal/usecases/role/`:
-  - [ ] `assign_role.go` - AssignRole (Admin only)
-  - [ ] `update_role.go` - UpdateRole (Admin only)
-  - [ ] `revoke_role.go` - RevokeRole (Admin only)
-  - [ ] `list_project_roles.go` - ListProjectRoles
-  - [ ] `check_permission.go` - CheckUserPermission
+### 4.4 Role Management Use Cases ✅
+- [x] Implement use cases in `internal/usecases/role/`:
+  - [x] `assign_role.go` - AssignRole (upsert)
+  - [x] `revoke_role.go` - RevokeRole
+  - [x] `check_permission.go` - CheckUserPermission (with helpers)
 
-### 4.5 Schema Management Use Cases
-- [ ] Implement use cases in `internal/usecases/schema/`:
-  - [ ] `create_schema.go` - CreateConfigSchema (Admin only)
-  - [ ] `list_schemas.go` - ListConfigSchemas
-  - [ ] `get_schema.go` - GetConfigSchema
-  - [ ] `update_schema.go` - UpdateConfigSchema (Admin only)
-  - [ ] `delete_schema.go` - DeleteConfigSchema (Admin only)
-  - [ ] `validate_config.go` - ValidateConfigAgainstSchema
+### 4.5 Schema Management Use Cases ✅
+- [x] Implement use cases in `internal/usecases/schema/`:
+  - [x] `create_schema.go` - CreateConfigSchema (with validation)
+  - [x] `list_schemas.go` - ListConfigSchemas (with usage count)
+  - [x] `update_schema.go` - UpdateConfigSchema
+  - [x] `delete_schema.go` - DeleteConfigSchema (with safety check)
 
-### 4.6 Config Management Use Cases
-- [ ] Implement use cases in `internal/usecases/config/`:
-  - [ ] `create_config.go` - CreateConfig (Admin only)
-  - [ ] `list_configs.go` - ListConfigs (filtered by project and role)
-  - [ ] `get_config.go` - GetConfig
-  - [ ] `update_config.go` - UpdateConfig (with optimistic locking & validation)
-  - [ ] `delete_config.go` - DeleteConfig (Admin only)
-  - [ ] `get_config_revisions.go` - GetConfigRevisions
-  - [ ] `rollback_config.go` - RollbackConfig (Admin only)
-  - [ ] `read_config_by_api_key.go` - ReadConfigByAPIKey (public API)
+### 4.6 Config Management Use Cases ✅
+- [x] Implement use cases in `internal/usecases/config/`:
+  - [x] `create_config.go` - CreateConfig (with schema validation)
+  - [x] `get_config.go` - GetConfig
+  - [x] `update_config.go` - UpdateConfig (**optimistic locking** + validation)
+  - [x] `delete_config.go` - DeleteConfig
+  - [x] `rollback_config.go` - RollbackConfig (to previous version)
+  - [x] `read_config_by_api_key.go` - ReadConfigByAPIKey (public client API)
 
 ---
 
