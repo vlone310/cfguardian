@@ -1,0 +1,129 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+  go: '1.25'
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  
+  govet:
+    enable-all: true
+    disable:
+      - shadow
+  
+  gocyclo:
+    min-complexity: 15
+  
+  dupl:
+    threshold: 100
+  
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  
+  misspell:
+    locale: US
+  
+  lll:
+    line-length: 120
+    tab-width: 4
+  
+  goimports:
+    local-prefixes: github.com/vlone310/cfguardian
+  
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+  
+  funlen:
+    lines: 100
+    statements: 50
+  
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+      - name: package-comments
+        severity: warning
+        disabled: false
+
+linters:
+  enable:
+    - errcheck      # Checks for unchecked errors
+    - gosimple      # Simplify code
+    - govet         # Reports suspicious constructs
+    - ineffassign   # Detects ineffectual assignments
+    - staticcheck   # Go static analysis
+    - unused        # Checks for unused constants, variables, functions and types
+    - gofmt         # Checks whether code was gofmt-ed
+    - goimports     # Checks import statements are formatted
+    - misspell      # Finds commonly misspelled English words
+    - goconst       # Finds repeated strings that could be constants
+    - gocyclo       # Computes cyclomatic complexity
+    - dupl          # Code clone detection
+    - lll           # Reports long lines
+    - unparam       # Reports unused function parameters
+    - nakedret      # Finds naked returns in functions
+    - prealloc      # Finds slice declarations that could be preallocated
+    - exportloopref # Checks for pointers to enclosing loop variables
+    - gocritic      # Provides diagnostics that check for bugs
+    - gci           # Controls Go package import order
+    - revive        # Fast, configurable, extensible linter
+    - gosec         # Inspects source code for security problems
+    - bodyclose     # Checks whether HTTP response body is closed
+    - nilerr        # Finds code that returns nil even if it checks err is not nil
+    - errorlint     # Find code that will cause problems with error wrapping
+    - sqlclosecheck # Checks that sql.Rows and sql.Stmt are closed
+
+  disable:
+    - exhaustruct   # Too strict for general use
+    - wsl           # Too opinionated about whitespace
+    - nlreturn      # Too opinionated
+    - funlen        # Will enable selectively
+    - gomnd         # Magic number detection (too noisy)
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - goconst
+    
+    # Exclude linters for generated files
+    - path: \.gen\.go$
+      linters:
+        - all
+    
+    # Exclude linters for sqlc generated files
+    - path: db/sqlc/
+      linters:
+        - all
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  new: false
+
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  uniq-by-line: true
+  sort-results: true
+
