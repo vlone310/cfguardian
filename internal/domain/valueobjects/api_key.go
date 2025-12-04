@@ -9,16 +9,16 @@ import (
 const (
 	// APIKeyPrefix is the standard prefix for API keys
 	APIKeyPrefix = "cfg_"
-	
+
 	// APIKeyLength is the total length of the API key (including prefix)
 	APIKeyLength = 36 // cfg_ (4) + 32 random chars
-	
+
 	// APIKeyRandomPartLength is the length of the random part
 	APIKeyRandomPartLength = 32
 )
 
-// apiKeyRegex validates the API key format
-var apiKeyRegex = regexp.MustCompile(`^cfg_[a-zA-Z0-9]{32}$`)
+// apiKeyRegex validates the API key format (base64 URL-safe: alphanumeric + - and _)
+var apiKeyRegex = regexp.MustCompile(`^cfg_[a-zA-Z0-9_-]{32}$`)
 
 // APIKey represents a validated API key for client access
 type APIKey struct {
@@ -29,24 +29,24 @@ type APIKey struct {
 func NewAPIKey(key string) (APIKey, error) {
 	// Trim spaces
 	trimmed := strings.TrimSpace(key)
-	
+
 	// Validate
 	if trimmed == "" {
 		return APIKey{}, fmt.Errorf("api key cannot be empty")
 	}
-	
+
 	if !strings.HasPrefix(trimmed, APIKeyPrefix) {
 		return APIKey{}, fmt.Errorf("api key must start with '%s'", APIKeyPrefix)
 	}
-	
+
 	if len(trimmed) != APIKeyLength {
 		return APIKey{}, fmt.Errorf("api key must be exactly %d characters", APIKeyLength)
 	}
-	
+
 	if !apiKeyRegex.MatchString(trimmed) {
 		return APIKey{}, fmt.Errorf("invalid api key format")
 	}
-	
+
 	return APIKey{value: trimmed}, nil
 }
 
@@ -92,4 +92,3 @@ func (a APIKey) Masked() string {
 func (a APIKey) HasPrefix() bool {
 	return strings.HasPrefix(a.value, APIKeyPrefix)
 }
-

@@ -1,15 +1,21 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vlone310/cfguardian/internal/usecases/role"
 )
 
+// PermissionChecker defines the interface for checking permissions
+type PermissionChecker interface {
+	Execute(ctx context.Context, req role.CheckPermissionRequest) (*role.CheckPermissionResponse, error)
+}
+
 // AuthorizationConfig holds authorization configuration
 type AuthorizationConfig struct {
-	CheckPermission *role.CheckPermissionUseCase
+	CheckPermission PermissionChecker
 }
 
 // RequireRole middleware requires a specific role level for the project
@@ -24,7 +30,7 @@ func RequireRole(cfg AuthorizationConfig, requiredRole string) func(http.Handler
 				w.Write([]byte(`{"error":"User not authenticated","code":"UNAUTHORIZED"}`))
 				return
 			}
-			
+
 			// Get project ID from URL params
 			projectID := chi.URLParam(r, "projectId")
 			if projectID == "" {
@@ -32,21 +38,21 @@ func RequireRole(cfg AuthorizationConfig, requiredRole string) func(http.Handler
 				next.ServeHTTP(w, r)
 				return
 			}
-			
+
 			// Check permission
 			resp, err := cfg.CheckPermission.Execute(r.Context(), role.CheckPermissionRequest{
-				UserID:           userID,
-				ProjectID:        projectID,
+				UserID:            userID,
+				ProjectID:         projectID,
 				RequiredRoleLevel: requiredRole,
 			})
-			
+
 			if err != nil || !resp.Allowed {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusForbidden)
 				w.Write([]byte(`{"error":"Insufficient permissions","code":"FORBIDDEN"}`))
 				return
 			}
-			
+
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -66,4 +72,3 @@ func RequireEditor(cfg AuthorizationConfig) func(http.Handler) http.Handler {
 func RequireViewer(cfg AuthorizationConfig) func(http.Handler) http.Handler {
 	return RequireRole(cfg, "viewer")
 }
-
